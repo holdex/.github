@@ -1,0 +1,13 @@
+{
+    "name": "Holdex Organization Workflow",
+    "description": "Holdex Organization CI starter workflow.",
+    "iconName": "octicon pivot-column height:24",
+    "categories": [
+        "Javascript",
+        "Coaching"
+    ],
+    "filePatterns": [
+        "package.json$",
+        ".*\\.md$"
+    ]
+}
