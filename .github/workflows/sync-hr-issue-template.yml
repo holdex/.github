@@ -16,9 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.HOLDEX_APP_ID }}
+          private-key: ${{ secrets.HOLDEX_APP_SECRET }}
+          owner: holdex
+
       - name: Sync template to hr-member-* repos
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           ORG: holdex
           TEMPLATE_PATH: .github/ISSUE_TEMPLATE/leave_request.yml
         run: |
