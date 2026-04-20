@@ -1,7 +1,7 @@
 name: Leave Request
 description: Request paid, sick, or unpaid leave
-title: "Leave Request: FirstName LastName – YYYY-MM-DD to YYYY-MM-DD"
-labels: ["leave-request", "needs-review"]
+title: "Problem: Days out request from <YYYY-MM-DD> to <YYYY-MM-DD>"
+type: "Problem"
 assignees: ["markholdex"]
 body:
   - type: markdown
