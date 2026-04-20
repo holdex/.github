@@ -1,0 +1,48 @@
+name: Sync leave request template to hr-member repos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/ISSUE_TEMPLATE/leave_request.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync template to hr-member-* repos
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ORG: holdex
+          TEMPLATE_PATH: .github/ISSUE_TEMPLATE/leave_request.yml
+        run: |
+          CONTENT=$(base64 -w 0 "$TEMPLATE_PATH")
+
+          repos=$(gh api "orgs/$ORG/repos" --paginate --jq '.[].name' \
+            | grep '^hr-member-')
+
+          for repo in $repos; do
+            echo "Syncing to $ORG/$repo..."
+
+            sha=$(gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+              --jq '.sha' 2>/dev/null || echo "")
+
+            if [ -n "$sha" ]; then
+              gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+                --method PUT \
+                --field message="chore: sync leave request issue template" \
+                --field content="$CONTENT" \
+                --field sha="$sha"
+            else
+              gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+                --method PUT \
+                --field message="chore: add leave request issue template" \
+                --field content="$CONTENT"
+            fi
+          done
