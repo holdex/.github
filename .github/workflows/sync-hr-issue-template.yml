@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - .github/ISSUE_TEMPLATE/leave_request.yml
+      - workflow-templates/leave_request.yml
   workflow_dispatch:
 
 permissions:
@@ -28,9 +28,10 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           ORG: holdex
-          TEMPLATE_PATH: .github/ISSUE_TEMPLATE/leave_request.yml
+          TEMPLATE_SRC: workflow-templates/leave_request.yml
+          TEMPLATE_DEST: .github/ISSUE_TEMPLATE/leave_request.yml
         run: |
-          CONTENT=$(base64 -w 0 "$TEMPLATE_PATH")
+          CONTENT=$(base64 -w 0 "$TEMPLATE_SRC")
 
           repos=$(gh api "orgs/$ORG/repos" --paginate --jq '.[].name' \
             | grep '^hr-member-')
@@ -38,17 +39,17 @@ jobs:
           for repo in $repos; do
             echo "Syncing to $ORG/$repo..."
 
-            sha=$(gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+            sha=$(gh api "repos/$ORG/$repo/contents/$TEMPLATE_DEST" \
               --jq '.sha' 2>/dev/null || echo "")
 
             if [ -n "$sha" ]; then
-              gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+              gh api "repos/$ORG/$repo/contents/$TEMPLATE_DEST" \
                 --method PUT \
                 --field message="chore: sync leave request issue template" \
                 --field content="$CONTENT" \
                 --field sha="$sha"
             else
-              gh api "repos/$ORG/$repo/contents/$TEMPLATE_PATH" \
+              gh api "repos/$ORG/$repo/contents/$TEMPLATE_DEST" \
                 --method PUT \
                 --field message="chore: add leave request issue template" \
                 --field content="$CONTENT"
