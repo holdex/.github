@@ -11,5 +11,7 @@
   <hr />
 </div>
 
-Holdex is a blockchain venture studio propelling the success of entrepreneurs in the decentralized space.  
-We partner with startups who believe in the freedom of the economy and commit to strong execution.
+Design and Technology Studio for AI and Fintech Startups.
+$140M+ raised by the companies we've built for.
+
+How we work is written down in [developers](https://github.com/holdex/developers).
